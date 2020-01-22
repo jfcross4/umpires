@@ -19,10 +19,9 @@ noswing$strike <- as.numeric(noswing$description %in% "called_strike")
 noswing <- noswing %>% rename(px = plate_x, pz = plate_z)
 
 noswing_2016_06_03 <- noswing %>% filter(game_date == "2016-06-03")
-noswing_2016_06_03 <- noswing_2016_06_03 %>% rename(px = plate_x, pz = plate_z)
 
 m <- bam(strike ~ s(px, pz, by = factor(umpire_name)) +
-           factor(umpire_name), data = noswing, 
+           factor(umpire_name), data = noswing_2016_06_03, 
          family = binomial(link = 'logit'))
 x <- list(
   facet_wrap( ~  umpire_name),
@@ -30,4 +29,4 @@ x <- list(
   coord_equal(),
   viridis::scale_fill_viridis(name = "Probability of Called Strike Based on Umpire")
 )
-strikeFX(noswing, model = m, layer = x, draw_zones = TRUE)
+strikeFX(noswing_2016_06_03, model = m, layer = x, draw_zones = TRUE)
