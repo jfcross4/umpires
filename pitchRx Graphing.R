@@ -42,3 +42,27 @@ x <- list(
 )
 strikeFX(noswing_2016_06_03, model = m, layer = x, draw_zones = TRUE)
 
+#######
+myx.gam <- matrix(data=seq(from=-1.75, to=1.75, by=0.025), nrow=141, ncol=141)
+myz.gam <- t(matrix(data=seq(from=0.75,to=4.25, by=0.025), nrow=141, ncol=141))
+fitdata.gam <- data.frame(px=as.vector(myx.gam), pz=as.vector(myz.gam))
+
+temp <- fitdata.gam
+pred.grid <- data.frame(px=numeric(), pz=numeric(), strikes=numeric(), balls=numeric(), stand=factor())
+
+for (umpire in levels(noswing_2016_06_03$umpire_name)){
+      temp$umpire_name <- umpire
+      
+      pred.grid <- rbind(pred.grid, temp)
+}
+fitdata <- pred.grid
+fitdata$preds <- c(predict(m, pred.grid, type="response"))
+
+v <- ggplot(fitdata, aes(px, pz, z = preds))+facet_wrap(.~umpire_name)
+v2 <- v+ stat_contour(breaks=c(0.5), col="blue", size=1)+
+  geom_rect(aes(xmin=-10/12, xmax=10/12, ymin=2.5-10/12, ymax=2.5+10/12), fill="transparent", color="black")+
+  stat_contour(breaks=c(0.25, 0.75), col="red", linetype=2, size=0.5)+
+  labs(colour = "size")+scale_x_continuous(limits=c(-1.5, 1.5))+scale_y_continuous(limits=c(1, 4))+
+  ggtitle("Strike Zones by Umpire on 6/3/2016")
+
+
