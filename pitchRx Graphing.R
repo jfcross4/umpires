@@ -52,17 +52,29 @@ pred.grid <- data.frame(px=numeric(), pz=numeric(), strikes=numeric(), balls=num
 
 for (umpire in levels(noswing_2016_06_03$umpire_name)){
       temp$umpire_name <- umpire
-      
       pred.grid <- rbind(pred.grid, temp)
 }
+
 fitdata <- pred.grid
 fitdata$preds <- c(predict(m, pred.grid, type="response"))
 
 v <- ggplot(fitdata, aes(px, pz, z = preds))+facet_wrap(.~umpire_name)
+
+v <- ggplot(fitdata %>% dplyr::filter(umpire_name=="Bill Miller"), aes(px, pz, z = preds))
+
 v2 <- v+ stat_contour(breaks=c(0.5), col="blue", size=1)+
   geom_rect(aes(xmin=-10/12, xmax=10/12, ymin=2.5-10/12, ymax=2.5+10/12), fill="transparent", color="black")+
   stat_contour(breaks=c(0.25, 0.75), col="red", linetype=2, size=0.5)+
   labs(colour = "size")+scale_x_continuous(limits=c(-1.5, 1.5))+scale_y_continuous(limits=c(1, 4))+
   ggtitle("Strike Zones by Umpire on 6/3/2016")
 
+ggplot(fitdata %>% dplyr::filter(umpire_name=="Bill Miller"), aes(px, pz, fill = preds))+
+  geom_raster(aes(fill = preds)) +
+scale_fill_gradient2(midpoint = 0.5)+ 
+  scale_x_continuous(limits=c(-1.5, 1.5))+scale_y_continuous(limits=c(1, 4))
 
+ggplot(fitdata, aes(px, pz, fill = preds))+facet_wrap(.~umpire_name)+
+  geom_raster(aes(fill = preds)) +
+  scale_fill_gradient2(midpoint = 0.5)+ 
+  geom_rect(aes(xmin=-10/12, xmax=10/12, ymin=2.5-10/12, ymax=2.5+10/12), fill="transparent", color="black")+
+  scale_x_continuous(limits=c(-1.5, 1.5))+scale_y_continuous(limits=c(1, 4))
