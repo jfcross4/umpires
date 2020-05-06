@@ -34,10 +34,10 @@ m_logistic_top <- glm(strike ~ z_above_sztop+z_above_avg_sztop+z_above_height_to
 #gd_savant_new_slim_top_middle_noswing$pred_strike_linear_top <- predict(m, gd_savant_new_slim_top_middle_noswing)
 gd_savant_new_slim_top_middle_noswing$pred_strike_logistic_top <- predict(m_logistic_top, gd_savant_new_slim_top_middle_noswing,
                                                                     type="response")
-intercept_coef_top <- -1*coef(m_logistic)["(Intercept)"]
-sztop_coef <- coef(m_logistic)["z_above_sztop"]
-avg_sztop_coef <- coef(m_logistic)["z_above_avg_sztop"]
-above_height_top_coef <- coef(m_logistic)["z_above_height_top"]
+intercept_coef_top <- -1*coef(m_logistic_top)["(Intercept)"]
+sztop_coef <- coef(m_logistic_top)["z_above_sztop"]
+avg_sztop_coef <- coef(m_logistic_top)["z_above_avg_sztop"]
+above_height_top_coef <- coef(m_logistic_top)["z_above_height_top"]
 
 
 #umpire_full_data <- umpire_full_data  %>% mutate(umpire_full_data, based_on_sztop = plate_z-sz_top,  based_on_avgsz_top = plate_z - mean(sz_top))
@@ -51,3 +51,4 @@ gd_savant_new_slim_top_middle_noswing <- gd_savant_new_slim_top_middle_noswing  
            (sztop_coef+avg_sztop_coef+above_height_top_coef))
 
 gd_savant_new_slim_top_middle_noswing %>% filter(plate_z > pred_top+0.2, plate_z < sz_top-0.2) %>% summarize(n=n(), mean(strike))
+pred_top_avg <- gd_savant_new_slim_top_middle_noswing %>% summarise(mean(pred_top))

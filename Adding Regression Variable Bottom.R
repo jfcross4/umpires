@@ -32,12 +32,12 @@ gd_savant_new_slim_bot_middle_noswing <- gd_savant_new_slim_noswing %>% filter(p
 m_logistic_bot <- glm(strike ~ z_above_szbot+z_above_avg_szbot+z_above_height_bot, data=gd_savant_new_slim_bot_middle_noswing,
                   family="binomial")
 #gd_savant_new_slim_bot_middle_noswing$pred_strike_linear <- predict(m, gd_savant_new_slim_bot_middle_noswing)
-gd_savant_new_slim_bot_middle_noswing$pred_strike_logistic_bot <- predict(m_logistic, gd_savant_new_slim_bot_middle_noswing,
+gd_savant_new_slim_bot_middle_noswing$pred_strike_logistic_bot <- predict(m_logistic_bot, gd_savant_new_slim_bot_middle_noswing,
                                                                       type="response")
-intercept_coef_bot <- -1*coef(m_logistic)["(Intercept)"]
-szbot_coef <- coef(m_logistic)["z_above_szbot"]
-avg_szbot_coef <- coef(m_logistic)["z_above_avg_szbot"]
-above_height_bot_coef <- coef(m_logistic)["z_above_height_bot"]
+intercept_coef_bot <- -1*coef(m_logistic_bot)["(Intercept)"]
+szbot_coef <- coef(m_logistic_bot)["z_above_szbot"]
+avg_szbot_coef <- coef(m_logistic_bot)["z_above_avg_szbot"]
+above_height_bot_coef <- coef(m_logistic_bot)["z_above_height_bot"]
 
 
 #umpire_full_data <- umpire_full_data  %>% mutate(umpire_full_data, based_on_szbot = plate_z-sz_bot,  based_on_avgsz_bot = plate_z - mean(sz_bot))
@@ -51,3 +51,5 @@ gd_savant_new_slim_bot_middle_noswing <- gd_savant_new_slim_bot_middle_noswing  
            (szbot_coef+avg_szbot_coef+above_height_bot_coef))
 
 gd_savant_new_slim_bot_middle_noswing %>% filter(plate_z > pred_bot-0.1, plate_z < sz_bot+0.1) %>% summarize(n=n(), mean(strike))
+
+pred_bot_avg <- gd_savant_new_slim_bot_middle_noswing %>% summarise(mean(pred_bot))
